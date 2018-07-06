@@ -4,13 +4,14 @@
 #
 Name     : qtserialport
 Version  : 5.11.0
-Release  : 7
+Release  : 8
 URL      : http://download.qt.io/official_releases/qt/5.11/5.11.0/submodules/qtserialport-everywhere-src-5.11.0.tar.xz
 Source0  : http://download.qt.io/official_releases/qt/5.11/5.11.0/submodules/qtserialport-everywhere-src-5.11.0.tar.xz
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : GFDL-1.3 GPL-2.0 GPL-3.0 LGPL-3.0
 Requires: qtserialport-lib
+Requires: qtserialport-license
 BuildRequires : cmake
 BuildRequires : pkgconfig(Qt5Core)
 BuildRequires : pkgconfig(Qt5Test)
@@ -35,9 +36,18 @@ dev components for the qtserialport package.
 %package lib
 Summary: lib components for the qtserialport package.
 Group: Libraries
+Requires: qtserialport-license
 
 %description lib
 lib components for the qtserialport package.
+
+
+%package license
+Summary: license components for the qtserialport package.
+Group: Default
+
+%description license
+license components for the qtserialport package.
 
 
 %prep
@@ -48,13 +58,20 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-qmake QMAKE_CFLAGS="$CFLAGS" QMAKE_CXXFLAGS="$CXXFLAGS" QMAKE_LFLAGS="$LDFLAGS" \
-    QMAKE_CFLAGS_RELEASE= QMAKE_CXXFLAGS_RELEASE=
+%qmake
 test -r config.log && cat config.log
 make  %{?_smp_mflags}
 
 %install
-make INSTALL_ROOT=%{buildroot} install
+export SOURCE_DATE_EPOCH=1530913380
+rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/doc/qtserialport
+cp LICENSE.GPL3 %{buildroot}/usr/share/doc/qtserialport/LICENSE.GPL3
+cp LICENSE.GPL3-EXCEPT %{buildroot}/usr/share/doc/qtserialport/LICENSE.GPL3-EXCEPT
+cp LICENSE.GPL2 %{buildroot}/usr/share/doc/qtserialport/LICENSE.GPL2
+cp LICENSE.FDL %{buildroot}/usr/share/doc/qtserialport/LICENSE.FDL
+cp LICENSE.LGPL3 %{buildroot}/usr/share/doc/qtserialport/LICENSE.LGPL3
+%make_install
 
 %files
 %defattr(-,root,root,-)
@@ -76,7 +93,6 @@ make INSTALL_ROOT=%{buildroot} install
 /usr/include/qt5/QtSerialPort/qtserialportversion.h
 /usr/lib64/cmake/Qt5SerialPort/Qt5SerialPortConfig.cmake
 /usr/lib64/cmake/Qt5SerialPort/Qt5SerialPortConfigVersion.cmake
-/usr/lib64/libQt5SerialPort.la
 /usr/lib64/libQt5SerialPort.prl
 /usr/lib64/libQt5SerialPort.so
 /usr/lib64/pkgconfig/Qt5SerialPort.pc
@@ -88,3 +104,11 @@ make INSTALL_ROOT=%{buildroot} install
 /usr/lib64/libQt5SerialPort.so.5
 /usr/lib64/libQt5SerialPort.so.5.11
 /usr/lib64/libQt5SerialPort.so.5.11.0
+
+%files license
+%defattr(-,root,root,-)
+/usr/share/doc/qtserialport/LICENSE.FDL
+/usr/share/doc/qtserialport/LICENSE.GPL2
+/usr/share/doc/qtserialport/LICENSE.GPL3
+/usr/share/doc/qtserialport/LICENSE.GPL3-EXCEPT
+/usr/share/doc/qtserialport/LICENSE.LGPL3
